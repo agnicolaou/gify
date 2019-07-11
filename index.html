@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>GIFY</title>
+</head>
+
+<body>
+  <!-- Retrieved data will be dumped here -->
+  <div class="buttons"></div>
+
+  <div class="my-form">
+    <form>
+      <input type="text" id="input">
+      <button id="search">Search for a GIF</button>
+    </form>
+  </div>
+
+  <div class="gifs"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script type="text/javascript">
+
+    // global variables
+    var APIKey = "aOLof2ESuYsak8YT35ONSrLalIIRHB8C";
+    var topics = ["dogs", "cats", "horses", "frogs"];
+    var search = "";
+
+    // for loop to append buttons
+    for (i = 0; i < topics.length; i++) {
+      $(".buttons").append("<button class='gif-buttons'>" + topics[i] + "</button>");
+    }
+
+    // when the search button is clicked
+    $("#search").on("click", function (event) {
+      // prevent refresh
+      event.preventDefault()
+
+      var userInput = $("#input").val()
+      console.log(userInput)
+
+      // take user input from foorm, and append a new button 
+      $(".buttons").append("<button class='gif-buttons'>" + userInput + "</button>")
+
+      // clear user form input
+      $("#input").val("")
+    })
+
+    // for dynamically appended buttons
+    $(document).on("click", ".gif-buttons", function (event) {
+
+      if (event.target.className === "gif-buttons") {
+        $(".gifs").html("");
+        search = $(this).text();
+        console.log("search" + search)
+        var queryURL = "https://api.giphy.com/v1/gifs/search?api_key=" + APIKey + "&q=" + search + "&limit=10&offset=0&rating=R&lang=en";
+        console.log(queryURL);
+        $.ajax({
+          url: queryURL,
+          method: "GET"
+        }).then(function (response) {
+          console.log(response);
+          for (i = 0; i < 10; i++) {
+            $(".gifs").append(`<img src="${response.data[i].images.fixed_height.url}">`)
+          }
+        });
+      }
+    })
+
+  </script>
+</body>
+
+</html>
